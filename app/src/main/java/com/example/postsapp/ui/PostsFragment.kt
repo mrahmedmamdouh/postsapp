@@ -26,8 +26,8 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
         }
 
         viewModel.getPostsObservable().observe(viewLifecycleOwner, Observer {
-                val postAdapter = PostsAdapter(it)
-                binding.list.adapter = postAdapter
+            val postAdapter = PostsAdapter(it)
+            binding.list.adapter = postAdapter
         })
     }
 }

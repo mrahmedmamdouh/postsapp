@@ -2,7 +2,6 @@ package com.example.postsapp.requests
 
 import com.example.postsapp.model.Comment
 import com.example.postsapp.model.Post
-import kotlinx.coroutines.flow.Flow
 import retrofit2.http.GET
 
 interface ApiInterface {

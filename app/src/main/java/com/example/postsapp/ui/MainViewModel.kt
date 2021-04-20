@@ -19,7 +19,7 @@ class MainViewModel @Inject constructor(
         getPosts()
     }
 
-    fun getPosts() {
+    private fun getPosts() {
 
         viewModelScope.launch {
 
@@ -43,7 +43,6 @@ class MainViewModel @Inject constructor(
             post.comment = commonList
         }
         posts.postValue(postsFlow)
-
     }
 
 
