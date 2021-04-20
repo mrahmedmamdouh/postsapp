@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <variable
             name="post"
             type="com.example.postsapp.model.Post" />
@@ -39,7 +38,7 @@
             android:id="@+id/comments"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{post.comment.size()}"
+            android:text="@{String.valueOf(post.comment.size())}"
             android:textSize="14sp" />
     </LinearLayout>
 </layout>

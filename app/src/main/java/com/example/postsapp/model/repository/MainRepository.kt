@@ -17,26 +17,28 @@ class MainRepository @Inject constructor(
     private val apiInterface: ApiInterface,
 ) {
 
-    fun getPostsObservable(): Observable<Post> {
+    fun getPostsObservable(): Observable<List<Post>> {
         return apiInterface.getPosts()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .flatMap(Function<List<Post>, ObservableSource<Post>> {
+            .flatMap(Function<List<Post>, ObservableSource<List<Post>>> {
                 Timber.d("Post with id: ${it[0].id} has ${it.size} comments")
-                return@Function Observable.fromIterable(it).subscribeOn(Schedulers.io())
+                return@Function getComments(it)
             })
     }
 
-    fun getComments(post: Post): Observable<Post> {
+    fun getComments(posts: List<Post>): Observable<List<Post>> {
         return apiInterface.getComments()
             .subscribeOn(Schedulers.io())
-            .map(Function<List<Comment>, Post> {
+            .map(Function<List<Comment>, List<Post>> {
                 val commonList: MutableList<Comment> = mutableListOf()
-                it.map {
-                    if (it.postId == post.id) commonList.add(it)
+                posts.map { post ->
+                    it.map {
+                        if (it.postId == post.id) commonList.add(it)
+                    }
+                    post.comment = commonList
                 }
-                post.comment = commonList
-                return@Function post
+                return@Function posts
             })
     }
 
