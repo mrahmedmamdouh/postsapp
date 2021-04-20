@@ -2,6 +2,7 @@ package com.example.postsapp.di
 
 import com.example.postsapp.BuildConfig
 import com.example.postsapp.requests.ApiInterface
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,20 +36,20 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRxJava2CallAdapterFactory() = RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io())
+    fun provideCoroutinesCallAdapterFactory() = CoroutineCallAdapterFactory()
 
 
     @Provides
     @Singleton
     fun provideRetrofitBuilder(
         gsonConverterFactory: GsonConverterFactory,
-        rxJava2CallAdapterFactory: RxJava2CallAdapterFactory,
+        coroutineCallAdapterFactory: CoroutineCallAdapterFactory,
         okHttpClient: OkHttpClient
     ): Retrofit = Retrofit.Builder()
         .baseUrl(BuildConfig.BASE_URL)
         .addConverterFactory(gsonConverterFactory)
         .client(okHttpClient)
-        .addCallAdapterFactory(rxJava2CallAdapterFactory)
+        .addCallAdapterFactory(coroutineCallAdapterFactory)
         .build()
 
     @Provides

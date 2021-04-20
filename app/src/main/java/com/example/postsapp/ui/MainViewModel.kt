@@ -1,13 +1,11 @@
 package com.example.postsapp.ui
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.*
+import com.example.postsapp.model.Comment
 import com.example.postsapp.model.Post
 import com.example.postsapp.model.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,21 +18,36 @@ class MainViewModel @Inject constructor(
     init {
         getPosts()
     }
-    @SuppressLint("CheckResult")
+
     fun getPosts() {
-        repository.getPostsObservable()
-            .subscribeOn(Schedulers.io())
-            .subscribeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                posts.postValue(it)
-            }, {
-                Timber.e(it)
+
+        viewModelScope.launch {
+
+            val getPostsFromApi = async { repository.getPostsObservable() }
+            val getCommentsFromApi = async { repository.getComments() }
+
+            processData(getPostsFromApi.await(), getCommentsFromApi.await())
+        }
+
+    }
+
+    private fun processData(
+        postsFlow: List<Post>,
+        commentsFlow: List<Comment>
+    ) {
+        postsFlow.map { post ->
+            val commonList: MutableList<Comment> = mutableListOf()
+            commentsFlow.map { comment ->
+                if (comment.postId == post.id) commonList.add(comment)
             }
-            )
+            post.comment = commonList
+        }
+        posts.postValue(postsFlow)
+
     }
 
 
-    fun getPostsObservable() : LiveData<List<Post>>{
+    fun getPostsObservable(): LiveData<List<Post>> {
         return posts
     }
 }
