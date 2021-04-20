@@ -8,7 +8,6 @@ import io.reactivex.ObservableSource
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,21 +21,20 @@ class MainRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .flatMap(Function<List<Post>, ObservableSource<List<Post>>> {
-                Timber.d("Post with id: ${it[0].id} has ${it.size} comments")
                 return@Function getComments(it)
             })
     }
 
-    fun getComments(posts: List<Post>): Observable<List<Post>> {
+    private fun getComments(posts: List<Post>): Observable<List<Post>> {
         return apiInterface.getComments()
             .subscribeOn(Schedulers.io())
             .map(Function<List<Comment>, List<Post>> {
-                val commonList: MutableList<Comment> = mutableListOf()
                 posts.map { post ->
+                    val commonList: MutableList<Comment> = mutableListOf()
                     it.map {
                         if (it.postId == post.id) commonList.add(it)
                     }
-                    post.comment = commonList
+                    post.comment =  commonList
                 }
                 return@Function posts
             })

@@ -32,7 +32,7 @@ class MainViewModelTest {
     private lateinit var mainViewModel: MainViewModel
     @Before
     fun setup() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.initMocks(this)
         mainRepository = MainRepository(api)
         mainViewModel = MainViewModel(mainRepository)
     }
@@ -40,9 +40,9 @@ class MainViewModelTest {
 
     @Test
     fun testApi() {
-        mainViewModel.posts.observeForever {}
-        Assert.assertNotNull(mainViewModel.posts.value)
-        Timber.d("${mainViewModel.posts.value}")
+        mainViewModel.getPostsObservable().observeForever {}
+        Assert.assertNotNull(mainViewModel.getPostsObservable().value)
+        Timber.d("${mainViewModel.getPostsObservable().value}")
     }
 
 }

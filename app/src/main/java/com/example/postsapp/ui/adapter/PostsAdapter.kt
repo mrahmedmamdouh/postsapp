@@ -25,9 +25,7 @@ class PostsAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostsAd
         fun bind(post: Post){
 
             binding.apply {
-                title.text = post.title
-                body.text = post.body
-                comments.text = post.comment.size.toString()
+              this.post = post
             }
         }
     }
